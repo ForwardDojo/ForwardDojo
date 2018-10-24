@@ -1,0 +1,67 @@
+@model Job
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+#welcome{
+    color: white;
+    text-decoration-color: white;
+}    
+</style>
+<script>
+$(document).ready(function(){
+    $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
+</script>
+<link rel="stylesheet" href="~/css/stylesDash.css"/>
+<!------ Include the above in your HEAD tag ---------->
+<h1 id="welcome">Welcome @ViewBag.theUser <span><a href="/Logout"><button type="button" class="btn btn-success">Logout</button></a></span></h1>
+<a href="/MyPage"><button type="button" class="btn btn-success">My Profile</button></a>
+
+
+<input id="myInput" type="text" placeholder="Search..">
+<br><br>
+<table>
+    <thead>
+        <tr>
+            <th>Company</th>
+            <th>Position</th>
+            <th>Date Posted</th>
+            <th>Job Link</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+
+    @foreach (var item in ViewBag.allJobs)
+    {
+        <tr>
+            <th>@item["company"]</th>
+            <th>@item["position"]</th>
+            <th>@item["date"]</th>
+            <th><a href=@item["url"]>@item["company"]'s Website</a></th>
+            <th><a href="JobDescription"></a></th>
+            <th>
+                <form asp-action="JobDescription" asp-controller="Home" method="POST">
+                    <input type="hidden" asp-for="slug" name="slug" value=@item["slug"]/>
+                    <input type="hidden" asp-for="epoch" name="epoch" value=@item["epoch"]/>
+                    <input type="hidden" asp-for="date" name="date" value=@item["date"]/>
+                    <input type="hidden" asp-for="company" name="company" value=@item["company"]/>
+                    <input type="hidden" asp-for="position" name="position" value=@item["position"]/>
+                    <input type="hidden" asp-for="description" name="description" value=@item["description"]/>
+                    <input type="hidden" asp-for="url" name="url" value=@item["url"]>
+                    
+                    <input type="submit" class="btn btn-warning" value="Apply">
+                </form>
+            </th>
+        </tr>
+    }
+  </tbody>
+</table>
+  
+<p>Note that we start the search in tbody, to prevent filtering the table headers.</p>

@@ -1,0 +1,27 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="~/css/stylesDash.css"/>
+<style>
+#welcome{
+    color: white;
+    text-decoration-color: white;
+}    
+</style>
+<h1 id="welcome">Welcome @ViewBag.theUser <span><a href="/Dashboard"><button type="button" class="btn btn-success">Back</button></a></span></h1>
+
+<body>
+    <h2>@ViewBag.theJob</h2>
+    <table>
+        @foreach(var job in @ViewBag.allJobs) {
+            <tr>
+                <th>@job.company</th>
+                <th> - </th>
+                <td>
+                    <a href="Delete/@job.Job_ID"><button type="button" class="btn btn-warning">Remove from List</button></a>
+                    <a href="@job.url"><button type="button" class="btn btn-success">Apply</button></a>
+                </td>
+            </tr>
+        }
+    </table>
+</body>

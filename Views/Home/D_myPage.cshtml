@@ -1,0 +1,80 @@
+<!Doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="stylesMyPage.css" />
+</head>
+
+<body>
+    <h1 id="welcome">Welcome @ViewBag.theUser <span><a href="/Dashboard"><button type="button" class="btn btn-success">Back</button></a></span></h1>
+    <h5>Your Liked Jobs..</h5>
+
+    <div class='container-fluid'>
+        <div class='row'>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">Forward Dojo</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">My Profile</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <div class='row justify-content-between'>
+
+            <div class="col"></div>
+            <div class="col-10">
+                <div id='userJobs'>
+                    <table>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Company</th>
+                            <th>Apply</th>
+                            <th>Delete</th>
+                        </tr>
+                        @foreach(var job in @ViewBag.allJobs) {
+                            <tr>
+                                <th>@job.position</th>
+                                <th>@job.company</th>
+                                <th><a href="@job.url"><button type="button" class="btn btn-success">Apply</button></a></th>
+                                <td><a href="Delete/@job.Job_ID"><button type="button" class="btn btn-warning">Remove from List</button></a></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <div id='uploadInfo'>
+                    <h5>Upload your Resume</h5>
+                    <form>
+                        <input type="file" name='resume'>
+                        <input type="submit" value='submit!'>
+                    </form>
+                </div>
+
+
+            </div>
+            <div class="col"></div>
+
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>
