@@ -21,6 +21,8 @@ namespace forwardDojo.Controllers {
         public HomeController (MyContext context) {
             _context = context;
         }
+        //*************************************************************************************** 
+        //                                 LOGIN, LOGOUT, REGISTER
         //***************************************************************************************   
         [HttpGet]
         [Route ("")]
@@ -34,39 +36,6 @@ namespace forwardDojo.Controllers {
                 return View ("A_LogReg");
             }
             else {return View ("A_LogReg");}
-        }
-        [HttpGet]
-        [Route ("Logout")]
-        public IActionResult Logout () {
-            HttpContext.Session.Clear ();
-            return RedirectToAction ("Index");
-        }
-        [HttpPost]
-        [Route ("Login")]
-        public IActionResult Login (string Email, string Password) {
-            if (Email != null) {
-                User CheckEmail = _context.Users.SingleOrDefault (user => user.Email == Email);
-                if (CheckEmail != null) {
-                    var Hasher = new PasswordHasher<User> ();
-                    if (0 != Hasher.VerifyHashedPassword (CheckEmail, CheckEmail.Password, Password)) {
-                        HttpContext.Session.SetInt32 ("User_ID", CheckEmail.User_ID);
-                        System.Console.WriteLine ("\n\n\t===   REDIRECTING ===\n\n");
-                        return RedirectToAction ("Dashboard");
-                    } else {
-                        HttpContext.Session.SetString ("LogErrors", "Incorrect Email or Password");
-                        // ViewBag.LogErrors = "Incorrect Password";
-                        return RedirectToAction ("Index"); // return View ("AB_MainLogReg");
-                    }
-                } else {
-                    // ViewBag.LogErrors = "Incorrect Email or Password";
-                    HttpContext.Session.SetString ("LogErrors", "Incorrect Email or Password");
-                    return RedirectToAction ("Index"); // return View ("AB_MainLogReg");
-                }
-            } else {
-                ViewBag.LogErrors = "Incorrect Email or Password";
-                HttpContext.Session.SetString ("LogErrors", "Incorrect Email or Password");
-                return RedirectToAction ("Index"); // return View ("AB_MainLogReg");
-            }
         }
         [HttpPost]
         [Route ("")]
@@ -111,110 +80,40 @@ namespace forwardDojo.Controllers {
                 return View ("B_Dashboard");
             } else { return View ("A_LogReg"); }
         }
-        //=======================================================================================================//
-        [HttpGet]
-        [Route ("Dashboard")]
-        public IActionResult Dashboard () {
-            // string url = "https://remoteok.io/api?ref=producthunt";
-            string filepath = "Controllers/tempJobs.json";
-            string result = string.Empty;
-            using (StreamReader r = new StreamReader (filepath)) {
-                var json = r.ReadToEnd ();
-                var jobj = JArray.Parse (json);
-                ViewBag.allJobs = jobj;
-            }
-
-            if (HttpContext.Session.GetInt32 ("User_ID") == null) {
-                return RedirectToAction ("Index");
-            }
-
-            User CurrentUser = _context.Users.SingleOrDefault (user => user.User_ID == HttpContext.Session.GetInt32 ("User_ID"));
-            // List<Activity> AllActivities = _context.Activities.Include(activity => activity.Participants).ThenInclude(participant =>participant.User).ToList();
-            // List<Participant> UserParticipants = _context.Participants.Where(Guest => Guest.User.Equals(CurrentUser)).ToList();
-            // ViewBag.User_ID = HttpContext.Session.GetInt32("User_ID");
-            // ViewBag.AllActivities = AllActivities;
-            ViewBag.theUser = CurrentUser.FirstName + " " + CurrentUser.LastName;
-
-            return View ("B_Dashboard");
-        }
-        //=======================================================================================================//
-
-        //=======================================================================================================//
-        
-        //=======================================================================================================//
-
-
         [HttpPost]
-        [Route("JobDescription")]
-        public IActionResult JobDescription(Job model) {
-            if(HttpContext.Session.GetInt32("User_ID") == null) {
-                return RedirectToAction("Index");
+        [Route ("Login")]
+        public IActionResult Login (string Email, string Password) {
+            if (Email != null) {
+                User CheckEmail = _context.Users.SingleOrDefault (user => user.Email == Email);
+                if (CheckEmail != null) {
+                    var Hasher = new PasswordHasher<User> ();
+                    if (0 != Hasher.VerifyHashedPassword (CheckEmail, CheckEmail.Password, Password)) {
+                        HttpContext.Session.SetInt32 ("User_ID", CheckEmail.User_ID);
+                        System.Console.WriteLine ("\n\n\t===   REDIRECTING ===\n\n");
+                        return RedirectToAction ("Dashboard");
+                    } else {
+                        HttpContext.Session.SetString ("LogErrors", "Incorrect Email or Password");
+                        return RedirectToAction ("Index");
+                    }
+                } else {
+                    HttpContext.Session.SetString ("LogErrors", "Incorrect Email or Password");
+                    return RedirectToAction ("Index");
+                }
+            } else {
+                ViewBag.LogErrors = "Incorrect Email or Password";
+                HttpContext.Session.SetString ("LogErrors", "Incorrect Email or Password");
+                return RedirectToAction ("Index"); // return View ("AB_MainLogReg");
             }
-            System.Console.WriteLine("\n\n\t======================");
-            // System.Console.WriteLine("\t"+model);
-
-            User CurrentUser = _context.Users.SingleOrDefault(user => user.User_ID == HttpContext.Session.GetInt32("User_ID"));
-            Job CurrentJob = new Job{
-                slug = model.slug,                      // 1
-                epoch = model.epoch,                    // 2
-                date = Convert.ToDateTime(model.date),  // 3
-                company = model.company,                // 4
-                position = model.position,              // 5
-                description = model.description,        // 6
-                url = model.url,                         // 7
-                applied = false
-            };
-            System.Console.WriteLine("\n\n\t======================");
-            System.Console.WriteLine("\t--> 1.)\t"+model.slug);
-            System.Console.WriteLine("\t--> 2.)\t"+model.epoch);
-            System.Console.WriteLine("\t--> 3.)\t"+model.company);
-            System.Console.WriteLine("\t--> 4.)\t"+model.position);
-            System.Console.WriteLine("\t--> 5.)\t"+model.description);
-            System.Console.WriteLine("\t--> 6.)\t"+model.url);
-            System.Console.WriteLine("\t======================\n\n");
-            HttpContext.Session.SetString ("theJob", model.company);
-            HttpContext.Session.SetString ("theUser", (CurrentUser.FirstName + " " + CurrentUser.LastName));
-            _context.Add(CurrentJob); _context.SaveChanges();
-
-            Joined newJoined = new Joined{
-                User_ID = CurrentUser.User_ID,
-                Job_ID = CurrentJob.Job_ID,
-                User = CurrentUser,
-                Job = CurrentJob
-            };
-            _context.Add(newJoined);
-            _context.SaveChanges();
-            return RedirectToAction("Details");
         }
-
-
         [HttpGet]
-        [Route ("Details")]
-        public IActionResult Details () {
-            User CurrentUser = _context.Users.SingleOrDefault(user => user.User_ID == HttpContext.Session.GetInt32("User_ID"));
-            ViewBag.theJob = HttpContext.Session.GetString ("theJob");
-            ViewBag.theUser = HttpContext.Session.GetString ("theUser");
-
-            // List<Job> AllJobs = _context.Jobs
-            //     .Include(job => job.Joineds)
-            //     .ThenInclude(joined => joined.User)
-            //     .ToList();
-
-            List<Joined> UserJoineds = _context.Joineds.Where(Joined => Joined.User.Equals(CurrentUser)).ToList();
-            List<Job> allUserJobs = new List<Job>();
-
-            System.Console.WriteLine("\n\n\t----------------------");
-            foreach(var job in UserJoineds){
-                Job thisJob = _context.Jobs.SingleOrDefault(jobx => jobx.Job_ID == job.Job_ID);
-                allUserJobs.Add(thisJob);
-            }
-            ViewBag.allJobs = allUserJobs;
-
-            System.Console.WriteLine("\t----------------------\n\n");
-            return View ("c_temp");
-
+        [Route ("Logout")]
+        public IActionResult Logout () {
+            HttpContext.Session.Clear ();
+            return RedirectToAction ("Index");
         }
-
+        //*************************************************************************************** 
+        //                         PROFILE, DASHBOARD & DETAILS PAGE
+        //***************************************************************************************
         [HttpGet]
         [Route ("MyPage")]//Change route to username
         public IActionResult MyPage () {
@@ -232,7 +131,86 @@ namespace forwardDojo.Controllers {
             return View ("D_myPage");
             
         }
+        [HttpGet]
+        [Route ("Dashboard")]
+        public IActionResult Dashboard () {
+            User CurrentUser = _context.Users.SingleOrDefault (user => user.User_ID == HttpContext.Session.GetInt32 ("User_ID"));
+            
+            // string url = "https://remoteok.io/api?ref=producthunt";
+            string filepath = "Controllers/tempJobs.json";
+            string result = string.Empty;
+            using (StreamReader r = new StreamReader (filepath)) {
+                var json = r.ReadToEnd ();
+                var jobj = JArray.Parse (json);
+                ViewBag.allJobs = jobj;
+            }
+            if (HttpContext.Session.GetInt32 ("User_ID") == null) {return RedirectToAction ("Index");}
+            ViewBag.theUser = CurrentUser.FirstName + " " + CurrentUser.LastName;
 
+            return View ("B_Dashboard");
+        }
+
+        [HttpPost]
+        [Route ("DetailsP")]
+        public IActionResult DetailsP (Job model) {
+            User CurrentUser = _context.Users.SingleOrDefault(user => user.User_ID == HttpContext.Session.GetInt32("User_ID"));
+            HttpContext.Session.SetInt32("User_ID", CurrentUser.User_ID);
+            // HttpContext.Session.SetString("slug", model.slug);
+            HttpContext.Session.SetString("epoch", model.epoch);
+            HttpContext.Session.SetString("date", model.date.ToString());
+            HttpContext.Session.SetString("company", model.company);
+            HttpContext.Session.SetString("position", model.position);
+            HttpContext.Session.SetString("description", model.description);
+            HttpContext.Session.SetString("url", model.url);
+            return RedirectToAction("DetailsPage");}
+        [HttpGet]
+        [Route ("Details")]
+        public IActionResult DetailsPage () {
+            User CurrentUser = _context.Users.SingleOrDefault(user => user.User_ID == HttpContext.Session.GetInt32("User_ID"));
+            ViewBag.theUser = HttpContext.Session.GetString ("theUser");
+
+            // ViewBag.slug = HttpContext.Session.GetString("slug");
+            ViewBag.epoch = HttpContext.Session.GetString("epoch");
+            ViewBag.date = HttpContext.Session.GetString("date");
+            ViewBag.company = HttpContext.Session.GetString("company");
+            ViewBag.position = HttpContext.Session.GetString("position");
+            ViewBag.description = HttpContext.Session.GetString("description");
+            ViewBag.url = HttpContext.Session.GetString("url");
+
+            return View ("c_details");
+        }
+        //*************************************************************************************** 
+        //                         ADD, DELETE & APPLY FOR JOB
+        //***************************************************************************************
+        [HttpPost]
+        [Route("addJob")]
+        public IActionResult addJob(Job model) {
+            if(HttpContext.Session.GetInt32("User_ID") == null) {return RedirectToAction("Index");}
+            User CurrentUser = _context.Users.SingleOrDefault(user => user.User_ID == HttpContext.Session.GetInt32("User_ID"));
+
+            Job CurrentJob = new Job{
+                // slug = model.slug,                      // 1
+                epoch = model.epoch,                    // 2
+                date = Convert.ToDateTime(model.date),  // 3
+                company = model.company,                // 4
+                position = model.position,              // 5
+                description = model.description,        // 6
+                url = model.url,                        // 7
+                applied = false
+            };
+            HttpContext.Session.SetString ("theJob", model.company);
+            HttpContext.Session.SetString ("theUser", (CurrentUser.FirstName + " " + CurrentUser.LastName));
+            _context.Add(CurrentJob); _context.SaveChanges();
+            Joined newJoined = new Joined{
+                User_ID = CurrentUser.User_ID,
+                Job_ID = CurrentJob.Job_ID,
+                User = CurrentUser,
+                Job = CurrentJob
+            };
+            _context.Add(newJoined); _context.SaveChanges();
+            HttpContext.Session.SetInt32("Job_ID", CurrentJob.Job_ID);
+            return RedirectToAction("MyPage");
+        }
         [HttpGet]
         [Route("Delete/{Job_ID}")]
         public IActionResult Delete(int Job_ID) {
@@ -246,5 +224,6 @@ namespace forwardDojo.Controllers {
             _context.SaveChanges();
             return RedirectToAction("MyPage");
         }
+
     }
 }

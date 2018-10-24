@@ -20,6 +20,28 @@ $(document).ready(function(){
 </script>
 <link rel="stylesheet" href="~/css/stylesDash.css"/>
 <!------ Include the above in your HEAD tag ---------->
+
+    <div class='container-fluid'>
+        <div class='row'>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">Forward Dojo</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="Dashboard">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="MyPage">My Profile</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
 <h1 id="welcome">Welcome @ViewBag.theUser <span><a href="/Logout"><button type="button" class="btn btn-success">Logout</button></a></span></h1>
 <a href="/MyPage"><button type="button" class="btn btn-success">My Profile</button></a>
 
@@ -44,24 +66,22 @@ $(document).ready(function(){
             <th>@item["company"]</th>
             <th>@item["position"]</th>
             <th>@item["date"]</th>
-            <th><a href=@item["url"]>@item["company"]'s Website</a></th>
-            <th><a href="JobDescription"></a></th>
+            <th><a href=@item["url"]>@item["company"]'s Job Posting</a></th>
             <th>
-                <form asp-action="JobDescription" asp-controller="Home" method="POST">
+                <form asp-action="DetailsP" asp-controller="Home" method="POST">
                     <input type="hidden" asp-for="slug" name="slug" value=@item["slug"]/>
                     <input type="hidden" asp-for="epoch" name="epoch" value=@item["epoch"]/>
                     <input type="hidden" asp-for="date" name="date" value=@item["date"]/>
                     <input type="hidden" asp-for="company" name="company" value=@item["company"]/>
                     <input type="hidden" asp-for="position" name="position" value=@item["position"]/>
                     <input type="hidden" asp-for="description" name="description" value=@item["description"]/>
-                    <input type="hidden" asp-for="url" name="url" value=@item["url"]>
-                    
-                    <input type="submit" class="btn btn-warning" value="Apply">
+                    <input type="hidden" asp-for="url" name="url" value=@item["url"]> 
+                    <input type="submit" class="btn btn-warning" value="View Job">
                 </form>
             </th>
         </tr>
     }
   </tbody>
 </table>
+</div>
   
-<p>Note that we start the search in tbody, to prevent filtering the table headers.</p>

@@ -7,13 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="stylesMyPage.css" />
+    <link rel="stylesheet" href="~/css/stylesMyPage.css" />
 </head>
 
 <body>
-    <h1 id="welcome">Welcome @ViewBag.theUser <span><a href="/Dashboard"><button type="button" class="btn btn-success">Back</button></a></span></h1>
-    <h5>Your Liked Jobs..</h5>
-
+    
     <div class='container-fluid'>
         <div class='row'>
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -26,20 +24,23 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="Dashboard">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">My Profile</a>
+                            <a class="nav-link" href="MyPage">My Profile</a>
                         </li>
                     </ul>
                 </div>
             </nav>
         </div>
+    
         <div class='row justify-content-between'>
 
             <div class="col"></div>
             <div class="col-10">
                 <div id='userJobs'>
+                    <h1 id="welcome">Welcome @ViewBag.theUser <span><a href="/Dashboard"><button type="button" class="btn btn-success">Back</button></a></span></h1>
+
                     <table>
                         <tr>
                             <th>Job Title</th>
@@ -61,7 +62,7 @@
                     <h5>Upload your Resume</h5>
                     <form>
                         <input type="file" name='resume'>
-                        <input type="submit" value='submit!'>
+                        <input type="submit" value='Submit!'>
                     </form>
                 </div>
 
